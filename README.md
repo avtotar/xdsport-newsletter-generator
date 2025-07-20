@@ -13,4 +13,7 @@ Aplikacja do generowania newsletterów dla sklepu XDsport.pl
 - `src/` - Kod aplikacji (w przygotowaniu)
 
 ## 🎯 Cel projektu
-Stworzenie prostej aplikacji do szybkiego generowania newsletterów...
+Stworzenie prostej aplikacji do szybkiego generowania newsletterów bez konieczności ręcznej edycji HTML.
+
+## 🚀 Status
+Projekt w fazie początkowej. Szablon newslettera gotowy i przetestowany.
