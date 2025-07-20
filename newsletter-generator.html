@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator Newslettera XDsport</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f5f5f5;
+            line-height: 1.6;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .form-panel {
+            flex: 1;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-height: 100vh;
+            overflow-y: auto;
+        }
+
+        .preview-panel {
+            flex: 1;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-height: 100vh;
+            overflow-y: auto;
+        }
+
+        h1 {
+            color: #e53e3e;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input[type="text"], input[type="url"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus, input[type="url"]:focus, textarea:focus {
+            outline: none;
+            border-color: #e53e3e;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .product-section {
+            border: 2px solid #e5e5e5;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: #f9f9f9;
+        }
+
+        .product-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .product-title {
+            font-weight: 600;
+            color: #e53e3e;
+            font-size: 16px;
+        }
+
+        .remove-product {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+
+        .remove-product:hover {
+            background: #c82333;
+        }
+
+        .add-row-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+
+        .add-row-btn:hover {
+            background: #218838;
+        }
+
+        .copy-btn {
+            background: #e53e3e;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 30px;
+            transition: background-color 0.3s;
+        }
+
+        .copy-btn:hover {
+            background: #d73527;
+        }
+
+        .preview-container {
+            background: #f0f0f0;
+            padding: 20px;
+            border-radius: 4px;
+            overflow: auto;
+        }
+
+        .preview-newsletter {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            transform: scale(0.8);
+            transform-origin: top center;
+        }
+
+        @media (max-width: 1200px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .preview-panel {
+                max-height: 600px;
+            }
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 4px;
+            margin-top: 15px;
+            text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Form Panel -->
+        <div class="form-panel">
+            <h1>Generator Newslettera XDsport</h1>
+            
+            <form id="newsletterForm">
+                <div class="form-group">
+                    <label for="mainTitle">Hasło główne:</label>
+                    <input type="text" id="mainTitle" value="BUTY NA KAŻDĄ OKAZJĘ">
+                </div>
+
+                <div class="form-group">
+                    <label for="subtitle">Podtytuł:</label>
+                    <input type="text" id="subtitle" value="Odkryj naszą kolekcję - od małych stópek po dorosłe eleganckie kroki">
+                </div>
+
+                <div id="products-container">
+                    <!-- Products will be added here dynamically -->
+                </div>
+
+                <button type="button" class="add-row-btn" onclick="addProductRow()">Dodaj rząd (2 produkty)</button>
+
+                <div class="form-group">
+                    <label for="ctaText">Tekst przycisku CTA:</label>
+                    <input type="text" id="ctaText" value="PRZEJDŹ DO SKLEPU">
+                </div>
+
+                <div class="form-group">
+                    <label for="ctaLink">Link przycisku CTA:</label>
+                    <input type="url" id="ctaLink" value="https://xdsport.pl/">
+                </div>
+
+                <button type="button" class="copy-btn" onclick="copyHTML()">Kopiuj HTML</button>
+                <div class="success-message" id="successMessage">HTML skopiowany do schowka!</div>
+            </form>
+        </div>
+
+        <!-- Preview Panel -->
+        <div class="preview-panel">
+            <h2 style="text-align: center; margin-bottom: 20px; color: #333;">Podgląd na żywo</h2>
+            <div class="preview-container">
+                <div id="newsletter-preview" class="preview-newsletter">
+                    <!-- Newsletter preview will be generated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let productCount = 0;
+        let products = [];
+
+        // Initialize with default products
+        const defaultProducts = [
+            {
+                name: "TENISÓWKI DZIECIĘCE VIGGAMI",
+                price: "56,00 zł",
+                image: "https://xdsport.pl/hpeciai/bec270498132d3ce333d29022ab92515/pol_pm_Tenisowki-dzieciece-Viggami-ADAS-CAR-CZ-czarne-kacie-chlopiece-na-rzep-3849_1.webp",
+                link: "https://xdsport.pl/product-pol-3849-Tenisowki-dzieciece-Viggami-ADAS-CAR-CZ-czarne-kacie-chlopiece-na-rzep.html"
+            },
+            {
+                name: "TENISÓWKI BIAŁE AMERICAN CLUB",
+                price: "69,00 zł",
+                image: "https://xdsport.pl/hpeciai/d024fde4c45925abb847ce79c526ce59/pol_pm_Tenisowki-mlodziezowe-American-Club-biale-tenisowki-damskie-DLH-102WH-biale-3865_1.webp",
+                link: "https://xdsport.pl/product-pol-3865-Tenisowki-mlodziezowe-American-Club-biale-tenisowki-damskie-DLH-102WH-biale.html"
+            },
+            {
+                name: "KLAPKI DAMSKIE SKOTNICKI",
+                price: "59,00 zł",
+                image: "https://xdsport.pl/hpeciai/7571d1927006d11eec1fa5a9120efa8a/pol_pm_Eleganckie-klapki-damskie-Skotnicki-DKL-3-0614BE-bezowe-3869_1.webp",
+                link: "https://xdsport.pl/product-pol-3869-Eleganckie-klapki-damskie-Skotnicki-DKL-3-0614BE-bezowe.html"
+            },
+            {
+                name: "SANDAŁY DZIECIĘCE AMERICAN CLUB",
+                price: "45,00 zł",
+                image: "https://xdsport.pl/hpeciai/559c60b6047bac2cdef6b0c57cd28d51/pol_pm_Dzieciece-sandaly-piankowe-American-Club-BNH-143PI-rozowe-3855_1.webp",
+                link: "https://xdsport.pl/product-pol-3855-Dzieciece-sandaly-piankowe-American-Club-BNH-143PI-rozowe.html"
+            }
+        ];
+
+        function initializeProducts() {
+            products = [...defaultProducts];
+            addProductRow();
+            addProductRow();
+            updatePreview();
+        }
+
+        function addProductRow() {
+            const container = document.getElementById('products-container');
+            const rowDiv = document.createElement('div');
+            rowDiv.className = 'product-section';
+            rowDiv.id = `product-row-${productCount}`;
+            
+            const product1Index = productCount * 2;
+            const product2Index = productCount * 2 + 1;
+            
+            rowDiv.innerHTML = `
+                <div class="product-header">
+                    <span class="product-title">Rząd ${productCount + 1} - Produkty ${product1Index + 1} i ${product2Index + 1}</span>
+                    <button type="button" class="remove-product" onclick="removeProductRow(${productCount})">Usuń rząd</button>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div>
+                        <h4 style="color: #e53e3e; margin-bottom: 10px;">Produkt ${product1Index + 1}</h4>
+                        <div class="form-group">
+                            <label>Nazwa produktu:</label>
+                            <input type="text" id="product${product1Index}Name" value="${products[product1Index]?.name || ''}" oninput="updatePreview()">
+                        </div>
+                        <div class="form-group">
+                            <label>Cena:</label>
+                            <input type="text" id="product${product1Index}Price" value="${products[product1Index]?.price || ''}" oninput="updatePreview()">
+                        </div>
+                        <div class="form-group">
+                            <label>URL zdjęcia:</label>
+                            <input type="url" id="product${product1Index}Image" value="${products[product1Index]?.image || ''}" oninput="updatePreview()">
+                        </div>
+                        <div class="form-group">
+                            <label>Link produktu:</label>
+                            <input type="url" id="product${product1Index}Link" value="${products[product1Index]?.link || ''}" oninput="updatePreview()">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 style="color: #e53e3e; margin-bottom: 10px;">Produkt ${product2Index + 1}</h4>
+                        <div class="form-group">
+                            <label>Nazwa produktu:</label>
+                            <input type="text" id="product${product2Index}Name" value="${products[product2Index]?.name || ''}" oninput="updatePreview()">
+                        </div>
+                        <div class="form-group">
+                            <label>Cena:</label>
+                            <input type="text" id="product${product2Index}Price" value="${products[product2Index]?.price || ''}" oninput="updatePreview()">
+                        </div>
+                        <div class="form-group">
+                            <label>URL zdjęcia:</label>
+                            <input type="url" id="product${product2Index}Image" value="${products[product2Index]?.image || ''}" oninput="updatePreview()">
+                        </div>
+                        <div class="form-group">
+                            <label>Link produktu:</label>
+                            <input type="url" id="product${product2Index}Link" value="${products[product2Index]?.link || ''}" oninput="updatePreview()">
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            container.appendChild(rowDiv);
+            productCount++;
+            updatePreview();
+        }
+
+        function removeProductRow(rowIndex) {
+            const rowElement = document.getElementById(`product-row-${rowIndex}`);
+            if (rowElement) {
+                rowElement.remove();
+                updatePreview();
+            }
+        }
+
+        function updatePreview() {
+            const mainTitle = document.getElementById('mainTitle').value;
+            const subtitle = document.getElementById('subtitle').value;
+            const ctaText = document.getElementById('ctaText').value;
+            const ctaLink = document.getElementById('ctaLink').value;
+
+            // Collect all products from form
+            const currentProducts = [];
+            for (let i = 0; i < productCount * 2; i++) {
+                const nameEl = document.getElementById(`product${i}Name`);
+                const priceEl = document.getElementById(`product${i}Price`);
+                const imageEl = document.getElementById(`product${i}Image`);
+                const linkEl = document.getElementById(`product${i}Link`);
+                
+                if (nameEl && nameEl.value.trim()) {
+                    currentProducts.push({
+                        name: nameEl.value,
+                        price: priceEl.value,
+                        image: imageEl.value,
+                        link: linkEl.value
+                    });
+                }
+            }
+
+            const newsletter = generateNewsletterHTML(mainTitle, subtitle, currentProducts, ctaText, ctaLink);
+            document.getElementById('newsletter-preview').innerHTML = newsletter;
+        }
+
+        function generateNewsletterHTML(mainTitle, subtitle, products, ctaText, ctaLink) {
+            const productRows = [];
+            
+            // Group products in pairs
+            for (let i = 0; i < products.length; i += 2) {
+                const product1 = products[i];
+                const product2 = products[i + 1];
+                
+                let rowHTML = `
+                    <table class="row" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <table class="row-content stack" align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #ffffff; border-radius: 0; color: #000000; width: 600px; margin: 0 auto;" width="600">
+                                        <tbody>
+                                            <tr>`;
+                
+                if (product1) {
+                    rowHTML += `
+                                                <td class="column column-1" width="50%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-bottom: 5px; padding-left: 5px; padding-right: 5px; padding-top: 20px; vertical-align: top;">
+                                                    <table class="image_block block-1" width="100%" border="0" cellpadding="10" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                                        <tr>
+                                                            <td class="pad">
+                                                                <div class="alignment" align="center">
+                                                                    <div style="max-width: 270px;"><a href="${product1.link}" target="_blank"><img src="${product1.image}" style="display: block; height: auto; border: 0; max-width: 270px; width: 100%;" width="270" alt="${product1.name}"></a></div>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                    <table class="paragraph_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
+                                                        <tr>
+                                                            <td class="pad" style="padding-left:5px;padding-right:5px;padding-top:10px;">
+                                                                <div style="color:#333333;direction:ltr;font-family:Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;font-size:14px;font-weight:400;letter-spacing:0px;line-height:1.3;text-align:center;mso-line-height-alt:18px;">
+                                                                    <p style="margin: 0; margin-bottom: 8px; font-weight: 600;"><a href="${product1.link}" target="_blank" style="text-decoration: none; color: #333333;">${product1.name}</a></p>
+                                                                    <p style="margin: 0; color: #e53e3e; font-weight: 700; font-size: 16px;">${product1.price}</p>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                    <table class="button_block block-3" width="100%" border="0" cellpadding="10" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                                        <tr>
+                                                            <td class="pad">
+                                                                <div class="alignment" align="center"><a href="${product1.link}" target="_blank" style="color:#ffffff;text-decoration:none;"><span class="button" style="background-color: #333333; border-bottom: 0px solid transparent; border-left: 0px solid transparent; border-radius: 0px; border-right: 0px solid transparent; border-top: 0px solid transparent; color: #ffffff; display: inline-block; font-family: Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif; font-size: 14px; font-weight: 600; mso-border-alt: none; padding-bottom: 8px; padding-top: 8px; padding-left: 20px; padding-right: 20px; text-align: center; width: auto; word-break: keep-all; letter-spacing: 1px;"><span style="word-break: break-word; line-height: 28px;">ZOBACZ WIĘCEJ</span></span></a></div>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </td>`;
+                }
+                
+                if (product2) {
+                    rowHTML += `
+                                                <td class="column column-2" width="50%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-bottom: 5px; padding-left: 5px; padding-right: 5px; padding-top: 20px; vertical-align: top;">
+                                                    <table class="image_block block-1" width="100%" border="0" cellpadding="10" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                                        <tr>
+                                                            <td class="pad">
+                                                                <div class="alignment" align="center">
+                                                                    <div style="max-width: 270px;"><a href="${product2.link}" target="_blank"><img src="${product2.image}" style="display: block; height: auto; border: 0; max-width: 270px; width: 100%;" width="270" alt="${product2.name}"></a></div>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                    <table class="paragraph_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
+                                                        <tr>
+                                                            <td class="pad" style="padding-left:5px;padding-right:5px;padding-top:10px;">
+                                                                <div style="color:#333333;direction:ltr;font-family:Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;font-size:14px;font-weight:400;letter-spacing:0px;line-height:1.3;text-align:center;mso-line-height-alt:18px;">
+                                                                    <p style="margin: 0; margin-bottom: 8px; font-weight: 600;"><a href="${product2.link}" target="_blank" style="text-decoration: none; color: #333333;">${product2.name}</a></p>
+                                                                    <p style="margin: 0; color: #e53e3e; font-weight: 700; font-size: 16px;">${product2.price}</p>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                    <table class="button_block block-3" width="100%" border="0" cellpadding="10" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                                        <tr>
+                                                            <td class="pad">
+                                                                <div class="alignment" align="center"><a href="${product2.link}" target="_blank" style="color:#ffffff;text-decoration:none;"><span class="button" style="background-color: #333333; border-bottom: 0px solid transparent; border-left: 0px solid transparent; border-radius: 0px; border-right: 0px solid transparent; border-top: 0px solid transparent; color: #ffffff; display: inline-block; font-family: Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif; font-size: 14px; font-weight: 600; mso-border-alt: none; padding-bottom: 8px; padding-top: 8px; padding-left: 20px; padding-right: 20px; text-align: center; width: auto; word-break: keep-all; letter-spacing: 1px;"><span style="word-break: break-word; line-height: 28px;">ZOBACZ WIĘCEJ</span></span></a></div>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </td>`;
+                } else if (product1) {
+                    // If only one product in row, center it
+                    rowHTML = rowHTML.replace('width="50%"', 'width="100%"');
+                }
+                
+                rowHTML += `
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>`;
+                
+                productRows.push(rowHTML);
+            }
+
+            return `
+                <table class="nl-container" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f0f0f0;">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <!-- Hero Section -->
+                                <table class="row row-2" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <table class="row-content stack" align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #e53e3e; border-radius: 0; color: #000000; width: 600px; margin: 0 auto;" width="600">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="column column-1" width="100%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-bottom: 30px; padding-top: 30px; vertical-align: top;">
+                                                                <table class="paragraph_block block-1" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
+                                                                    <tr>
+                                                                        <td class="pad" style="padding-bottom:10px;padding-left:20px;padding-right:20px;padding-top:10px;">
+                                                                            <div style="color:#ffffff;direction:ltr;font-family:Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;font-size:28px;font-weight:700;letter-spacing:1px;line-height:1.2;text-align:center;mso-line-height-alt:34px;">
+                                                                                <p style="margin: 0;">${mainTitle}</p>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                </table>
+                                                                <table class="paragraph_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
+                                                                    <tr>
+                                                                        <td class="pad" style="padding-bottom:15px;padding-left:20px;padding-right:20px;padding-top:5px;">
+                                                                            <div style="color:#ffffff;direction:ltr;font-family:Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;font-size:16px;font-weight:400;letter-spacing:0px;line-height:1.4;text-align:center;mso-line-height-alt:22px;">
+                                                                                <p style="margin: 0;">${subtitle}</p>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <!-- Intro Text -->
+                                <table class="row row-2" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <table class="row-content stack" align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #ffffff; border-radius: 0; color: #000000; width: 600px; margin: 0 auto;" width="600">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="column column-1" width="100%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-bottom: 5px; padding-top: 5px; vertical-align: top;">
+                                                                <table class="paragraph_block block-1" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
+                                                                    <tr>
+                                                                        <td class="pad" style="padding-bottom:15px;padding-left:30px;padding-right:30px;padding-top:25px;">
+                                                                            <div style="color:#333333;direction:ltr;font-family:Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;font-size:16px;font-weight:400;letter-spacing:0px;line-height:1.5;text-align:center;mso-line-height-alt:24px;">
+                                                                                <p style="margin: 0;">Wybrane dla Ciebie produkty z darmową dostawą i gwarancją najlepszej ceny.</p>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <!-- Delivery Info -->
+                                <table class="row row-3" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <table class="row-content" align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f8f8f8; border-radius: 0; color: #000000; width: 600px; margin: 0 auto;" width="600">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="column column-1" width="100%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-bottom: 15px; padding-top: 15px; vertical-align: top;">
+                                                                <table class="paragraph_block block-1" width="100%" border="0" cellpadding="10" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
+                                                                    <tr>
+                                                                        <td class="pad">
+                                                                            <div style="color:#333333;direction:ltr;font-family:Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;font-size:16px;font-weight:600;letter-spacing:0px;line-height:1.3;text-align:center;mso-line-height-alt:21px;">
+                                                                                <p style="margin: 0;">🚚 DARMOWA DOSTAWA</p>
+                                                                                <p style="margin: 0; margin-top: 5px; font-weight: 400; font-size: 14px;">przy zamówieniach od 75 zł</p>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <!-- Products -->
+                                ${productRows.join('')}
+
+                                <!-- CTA Section -->
+                                <table class="row row-7" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <table class="row-content stack" align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f8f8f8; border-radius: 0; color: #000000; width: 600px; margin: 0 auto;" width="600">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="column column-1" width="100%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-bottom: 25px; padding-top: 25px; vertical-align: top;">
+                                                                <table class="paragraph_block block-1" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
+                                                                    <tr>
+                                                                        <td class="pad" style="padding-bottom:15px;padding-left:20px;padding-right:20px;padding-top:10px;">
+                                                                            <div style="color:#333333;direction:ltr;font-family:Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;font-size:18px;font-weight:600;letter-spacing:0px;line-height:1.3;text-align:center;mso-line-height-alt:23px;">
+                                                                                <p style="margin: 0;">Odkryj pełną kolekcję w naszym sklepie</p>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                </table>
+                                                                <table class="button_block block-2" width="100%" border="0" cellpadding="10" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                                                    <tr>
+                                                                        <td class="pad">
+                                                                            <div class="alignment" align="center"><a href="${ctaLink}" target="_blank" style="color:#ffffff;text-decoration:none;"><span class="button" style="background-color: #e53e3e; border-bottom: 0px solid transparent; border-left: 0px solid transparent; border-radius: 0px; border-right: 0px solid transparent; border-top: 0px solid transparent; color: #ffffff; display: inline-block; font-family: Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif; font-size: 16px; font-weight: 700; mso-border-alt: none; padding-bottom: 12px; padding-top: 12px; padding-left: 25px; padding-right: 25px; text-align: center; width: auto; word-break: keep-all; letter-spacing: 2px;"><span style="word-break: break-word; line-height: 32px;">${ctaText}</span></span></a></div>
+                                                                        </td>
+                                                                    </tr>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <!-- Footer -->
+                                <table class="row row-8" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <table class="row-content stack" align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #333333; color: #000000; width: 600px; margin: 0 auto;" width="600">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="column column-1" width="100%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-bottom: 20px; padding-top: 20px; vertical-align: top;">
+                                                                <table class="paragraph_block block-1" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
+                                                                    <tr>
+                                                                        <td class="pad" style="padding-bottom:10px;padding-left:20px;padding-right:20px;padding-top:10px;">
+                                                                            <div style="color:#ffffff;direction:ltr;font-family:Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;font-size:14px;font-weight:400;letter-spacing:0px;line-height:1.4;text-align:center;mso-line-height-alt:20px;">
+                                                                                <p style="margin: 0;">© 2025 XDsport.pl - Wszystkie prawa zastrzeżone</p>
+                                                                                <p style="margin: 0; margin-top: 8px;">
+                                                                                    <a href="https://xdsport.pl/" target="_blank" style="color: #ffffff; text-decoration: none;">xdsport.pl</a> |  
+                                                                                    <a href="mailto:xdsportsklep@gmail.com" style="color: #ffffff; text-decoration: none;">xdsportsklep@gmail.com</a>
+                                                                                </p>
+                                                                                <p style="margin: 0; margin-top: 15px; font-size: 12px; color: #cccccc;">
+                                                                                    <a href="https://xdsport.pl/pol_m_Buty-Meskie-266.html" target="_blank" style="color: #cccccc; text-decoration: none;">Buty Męskie</a> |  
+                                                                                    <a href="https://xdsport.pl/pol_m_Buty-Damskie-i-Mlodziezowe-267.html" target="_blank" style="color: #cccccc; text-decoration: none;">Buty Damskie</a> |  
+                                                                                    <a href="https://xdsport.pl/pol_m_Buty-Dzieciece-268.html" target="_blank" style="color: #cccccc; text-decoration: none;">Buty Dziecięce</a>
+                                                                                </p>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>`;
+        }
+
+        function getFullNewsletterHTML() {
+            const mainTitle = document.getElementById('mainTitle').value;
+            const subtitle = document.getElementById('subtitle').value;
+            const ctaText = document.getElementById('ctaText').value;
+            const ctaLink = document.getElementById('ctaLink').value;
+
+            // Collect all products from form
+            const currentProducts = [];
+            for (let i = 0; i < productCount * 2; i++) {
+                const nameEl = document.getElementById(`product${i}Name`);
+                const priceEl = document.getElementById(`product${i}Price`);
+                const imageEl = document.getElementById(`product${i}Image`);
+                const linkEl = document.getElementById(`product${i}Link`);
+                
+                if (nameEl && nameEl.value.trim()) {
+                    currentProducts.push({
+                        name: nameEl.value,
+                        price: priceEl.value,
+                        image: imageEl.value,
+                        link: linkEl.value
+                    });
+                }
+            }
+
+            const fullHTML = `<!DOCTYPE html>
+<html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" lang="pl">
+
+<head>
+    <title>XDsport Newsletter</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><!--[if mso]>
+<xml><w:WordDocument xmlns:w="urn:schemas-microsoft-com:office:word"><w:DontUseAdvancedTypographyReadingMail/></w:WordDocument>
+<o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch><o:AllowPNG/></o:OfficeDocumentSettings></xml>
+<![endif]--><!--[if !mso]><!-->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900" rel="stylesheet" type="text/css"><!--<![endif]-->
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        a[x-apple-data-detectors] {
+            color: inherit !important;
+            text-decoration: inherit !important;
+        }
+
+        #MessageViewBody a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        p {
+            line-height: inherit
+        }
+
+        .desktop_hide,
+        .desktop_hide table {
+            mso-hide: all;
+            display: none;
+            max-height: 0px;
+            overflow: hidden;
+        }
+
+        .image_block img+div {
+            display: none;
+        }
+
+        sup,
+        sub {
+            font-size: 75%;
+            line-height: 0;
+        }
+
+        @media (max-width:620px) {
+            .desktop_hide table.icons-inner {
+                display: inline-block !important;
+            }
+
+            .icons-inner {
+                text-align: center;
+            }
+
+            .icons-inner td {
+                margin: 0 auto;
+            }
+
+            .image_block div.fullWidth {
+                max-width: 100% !important;
+            }
+
+            .mobile_hide {
+                display: none;
+            }
+
+            .row-content {
+                width: 100% !important;
+            }
+
+            .stack .column {
+                width: 100%;
+                display: block;
+            }
+
+            .mobile_hide {
+                min-height: 0;
+                max-height: 0;
+                max-width: 0;
+                overflow: hidden;
+                font-size: 0px;
+            }
+
+            .desktop_hide,
+            .desktop_hide table {
+                display: table !important;
+                max-height: none !important;
+            }
+
+            .row-4 .column-1 .block-1.paragraph_block td.pad>div,
+            .row-4 .column-2 .block-1.paragraph_block td.pad>div {
+                font-size: 14px !important;
+            }
+
+            .row-5 .column-1 .block-2.button_block td.pad,
+            .row-5 .column-2 .block-2.button_block td.pad,
+            .row-6 .column-1 .block-2.button_block td.pad,
+            .row-6 .column-2 .block-2.button_block td.pad {
+                padding: 10px 15px !important;
+            }
+
+            .row-5 .column-1 .block-1.image_block td.pad,
+            .row-5 .column-2 .block-1.image_block td.pad,
+            .row-6 .column-1 .block-1.image_block td.pad,
+            .row-6 .column-2 .block-1.image_block td.pad {
+                padding: 5px 15px !important;
+            }
+
+            .row-5 .column-1 .block-2.button_block span,
+            .row-5 .column-2 .block-2.button_block span,
+            .row-6 .column-1 .block-2.button_block span,
+            .row-6 .column-2 .block-2.button_block span {
+                font-size: 14px !important;
+                line-height: 28px !important;
+            }
+
+            .row-5 .column-1,
+            .row-5 .column-2,
+            .row-6 .column-1,
+            .row-6 .column-2 {
+                padding: 0 !important;
+            }
+        }
+    </style>
+</head>
+
+<body class="body" style="background-color: #f0f0f0; margin: 0; padding: 0; -webkit-text-size-adjust: none; text-size-adjust: none;">
+    ${generateNewsletterHTML(mainTitle, subtitle, currentProducts, ctaText, ctaLink)}
+</body>
+
+</html>`;
+
+            return fullHTML;
+        }
+
+        async function copyHTML() {
+            try {
+                const fullHTML = getFullNewsletterHTML();
+                await navigator.clipboard.writeText(fullHTML);
+                
+                const successMsg = document.getElementById('successMessage');
+                successMsg.style.display = 'block';
+                setTimeout(() => {
+                    successMsg.style.display = 'none';
+                }, 3000);
+            } catch (err) {
+                alert('Błąd podczas kopiowania HTML. Sprawdź, czy przeglądarka obsługuje kopiowanie do schowka.');
+            }
+        }
+
+        // Add event listeners for live preview
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeProducts();
+            
+            // Add event listeners to main fields
+            document.getElementById('mainTitle').addEventListener('input', updatePreview);
+            document.getElementById('subtitle').addEventListener('input', updatePreview);
+            document.getElementById('ctaText').addEventListener('input', updatePreview);
+            document.getElementById('ctaLink').addEventListener('input', updatePreview);
+        });
+    </script>
+</body>
+</html>
